@@ -22,6 +22,7 @@ def abort_if_todo_exists(todo_id):
 parser = reqparse.RequestParser()
 parser.add_argument('task')
 parser.add_argument('user')
+parser.add_argument('show_users')
 
 
 @app.route('/', methods=('POST', 'GET'))
@@ -62,12 +63,16 @@ class Users(Resource):
     def post(self):
         args = parser.parse_args()
         users.append(args['user'])
-        print()
+        print(args['user'])
         return users, 201
 
     def get(self):
         args = parser.parse_args()
-        return args['user']
+        if args['user'] is not None:
+            users.append(args['user'])
+            return args['user']
+        elif args['show_users']:
+            return users
 
 api.add_resource(TodoList, '/api/todos')
 api.add_resource(Todo, '/api/todos/<todo_id>')
