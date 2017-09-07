@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+    <form method="post" action="http://localhost:5002/api/users" id="users">
+        <input placeholder="Enter your name" type="text">
+        <input type="submit">
+    </form>
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('#users').submit(function(e) {
+                   var data = e.val();
+            var url  = 'http://localhost:5002/api/users';
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: data,
+                    success: "success",
+                    dataType: "string"
+                });
+            });
+        })
+    </script>
+</body>
+</html>
