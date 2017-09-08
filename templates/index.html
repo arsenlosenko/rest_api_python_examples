@@ -2,37 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Test API</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='client.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='client.css') }}">
 </head>
 <body>
-  <button onclick="sendClick()">Add click</button>
-  <button onclick="getClicks()">Get clicks</button>
-  <button onclick="delClick()">Delete click</button>
-    <script type="text/javascript">
-        function getClicks(){
-            var req = new XMLHttpRequest();
-            req.open('GET', '/api/v1/clicks', false);
-            req.send(null);
-            console.log(req.status, req.statusText);
-            console.log(req.responseText);
-        }
-
-        function sendClick(){
-            var req = new XMLHttpRequest();
-            req.open('POST','/api/v1/clicks', false);
-            req.send(null);
-            console.log(req.status, req.statusText);
-        }
-
-        function delClick(){
-            var req = new XMLHttpRequest();
-            req.open('DELETE','/api/v1/clicks', false);
-            req.send(null);
-            console.log(req.status, req.statusText);
-        }
-
-
-    </script>
+    <input type="text" id="name_input" placeholder="Enter your name">
+    <p id="name_par"></p>
+    <p id="clicks"></p>
+    <button id="send_name">Send name</button>
+    <button id="add_click">Add click</button>
+    <button id="get_clicks">Get clicks</button>
+    <button id="del_click">Delete click</button>
 </body>
 </html>
