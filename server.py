@@ -1,57 +1,61 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_restful import Resource, Api, reqparse, abort
 
 app = Flask(__name__)
 api = Api(app)
 
-TODOS = {
-    'todo1' : {"task": 'build an API'},
-    'todo2' : {"task": '???'},
-    'todo3' : {"task": 'Profit!'},
-}
+
+@app.route('/', methods=('POST', 'GET'))
+def home():
+    return render_template('index.html')
 
 
-def abort_if_todo_exists(todo_id):
-    if todo_id not in TODOS:
-        abort(404, message="Todo {} doesn't exist".format(todo_id))
+class Clicks(Resource):
+    clicks = {
+        "rel": "self",
+        "link": "http://localhost:5002/api/v1/clicks",
+        "amount": 0
+    }
 
-parser = reqparse.RequestParser()
-parser.add_argument('task')
-
-
-class Todo(Resource):
-    def get(self, todo_id):
-        abort_if_todo_exists(todo_id)
-        return TODOS[todo_id]
-
-    def delete(self, todo_id):
-        abort_if_todo_exists(todo_id)
-        del TODOS[todo_id]
-        return '', 204
-
-    def put(self, todo_id):
-        args = parser.parse_args()
-        task = {'task': args['task']}
-        TODOS[todo_id] = task
-        return task, 201
-
-class TodoList(Resource):
     def get(self):
-        return  TODOS
+        print("Sending clicks")
+        return self.__class__.clicks , 200
 
     def post(self):
-        args = parser.parse_args()
-        todo_id = int(max(TODOS.keys()).lstrip('todo')) + 1
-        todo_id = 'todo%i' % todo_id
-        TODOS[todo_id] = {'task': args['task']}
-        return TODOS[todo_id], 201
+        print("Adding click")
+        self.__class__.clicks['amount'] += 1
+        return self.__class__.clicks, 201
+
+    def delete(self):
+        print("Deleting click")
+        self.__class__.clicks['amount'] -= 1
+        return self.__class__.clicks
 
 
-api.add_resource(TodoList, '/todos')
-api.add_resource(Todo, '/todos/<todo_id>')
+class Users(Resource):
+    user = {
+        "name": "",
+        "clicks": Clicks().clicks,
+        "rel": "self",
+        "link": "http://localhost:5002/api/v1/users",
+    }
 
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('name')
+
+    def get(self):
+        return self.__class__.user
+
+    def post(self):
+        args = self.parser.parse_args()
+        self.__class__.user['name'] = args['name']
+        return self.__class__.user
+
+api.add_resource(Clicks, '/api/v1/clicks')
+api.add_resource(Users, '/api/v1/users')
 
 if __name__ == '__main__':
     app.run(port="5002")

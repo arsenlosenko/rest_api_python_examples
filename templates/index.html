@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test API</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='client.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='client.css') }}">
+</head>
+<body>
+    <input type="text" id="name_input" placeholder="Enter your name">
+    <p id="name_par"></p>
+    <p id="clicks"></p>
+    <button id="send_name">Send name</button>
+    <button id="add_click">Add click</button>
+    <button id="get_clicks">Get clicks</button>
+    <button id="del_click">Delete click</button>
+</body>
+</html>
