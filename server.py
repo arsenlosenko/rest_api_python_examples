@@ -6,78 +6,30 @@ from flask_restful import Resource, Api, reqparse, abort
 app = Flask(__name__)
 api = Api(app)
 
-TODOS = {
-    'todo1' : {"task": 'build an API'},
-    'todo2' : {"task": '???'},
-    'todo3' : {"task": 'Profit!'},
-}
-
-users = []
-
-
-def abort_if_todo_exists(todo_id):
-    if todo_id not in TODOS:
-        abort(404, message="Todo {} doesn't exist".format(todo_id))
-
-parser = reqparse.RequestParser()
-parser.add_argument('task')
-parser.add_argument('user')
-parser.add_argument('show_users')
-
 
 @app.route('/', methods=('POST', 'GET'))
 def home():
     return render_template('index.html')
 
 
-class Todo(Resource):
-    def get(self, todo_id):
-        abort_if_todo_exists(todo_id)
-        return TODOS[todo_id]
-
-    def delete(self, todo_id):
-        abort_if_todo_exists(todo_id)
-        del TODOS[todo_id]
-        return '', 204
-
-    def put(self, todo_id):
-        args = parser.parse_args()
-        task = {'task': args['task']}
-        TODOS[todo_id] = task
-        return task, 201
-
-
-class TodoList(Resource):
-    def get(self):
-        return  TODOS
-
-    def post(self):
-        args = parser.parse_args()
-        todo_id = int(max(TODOS.keys()).lstrip('todo')) + 1
-        todo_id = 'todo%i' % todo_id
-        TODOS[todo_id] = {'task': args['task']}
-        return TODOS[todo_id], 201
-
-
-class Users(Resource):
-    def post(self):
-        args = parser.parse_args()
-        users.append(args['user'])
-        print(args['user'])
-        return users, 201
+class Clicks(Resource):
+    clicks = 0
 
     def get(self):
-        args = parser.parse_args()
-        if args['user'] is not None:
-            users.append(args['user'])
-            return args['user']
-        elif args['show_users']:
-            return users
+        print("Sending clicks")
+        return {"clicks": self.clicks}, 200
 
-api.add_resource(TodoList, '/api/todos')
-api.add_resource(Todo, '/api/todos/<todo_id>')
-api.add_resource(Users, '/api/users')
+    def post(self):
+        print("Adding click")
+        self.__class__.clicks += 1
+        return 201
 
+    def delete(self):
+        print("Deleting click")
+        self.__class__.clicks -= 1
+        return 200
+
+api.add_resource(Clicks, '/api/v1/clicks')
 
 if __name__ == '__main__':
     app.run(port="5002")
